@@ -7,7 +7,7 @@
 #include <string>
 #include <mutex>
 
-namespace baykael{
+namespace bayukael{
 namespace SerialComm{
 
 enum class ConfigResult{
@@ -375,4 +375,4 @@ int SerialDevice::writeData(uint8_t * write_buffer, unsigned int length){
 }
 
 } // namespace SerialComm
-} // namespace baykael
+} // namespace bayukael
