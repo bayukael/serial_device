@@ -246,73 +246,73 @@ ConfigResult SerialDevice::SerialDeviceImpl::configure(){
 }
 
 bool SerialDevice::setBaudRate(BaudRate val){
-    pImpl->baud_rate_ = val;
-    ConfigResult res = pImpl->configure();
+    p_impl_->baud_rate_ = val;
+    ConfigResult res = p_impl_->configure();
 
     return (res == ConfigResult::SUCCESS || res == ConfigResult::DEVICE_IS_CLOSED) ? true : false;
 }
 
 bool SerialDevice::setDevicePath(const std::string& device_path){
-    if(pImpl->status_ == State::OPEN){ // We should not change the device path when the device is opened
+    if(p_impl_->status_ == State::OPEN){ // We should not change the device path when the device is opened
         return false;
     }
-    pImpl->device_path_ = device_path;
+    p_impl_->device_path_ = device_path;
     return true;
 }
 
 bool SerialDevice::setHardwareFlowControl(bool use){
-    pImpl->use_hardware_flow_control_ = use;
-    ConfigResult res = pImpl->configure();
+    p_impl_->use_hardware_flow_control_ = use;
+    ConfigResult res = p_impl_->configure();
 
     return (res == ConfigResult::SUCCESS || res == ConfigResult::DEVICE_IS_CLOSED) ? true : false;
 }
 bool SerialDevice::setNumOfBitsPerByte(NumOfBitsPerByte val){
-    pImpl->num_of_bits_per_byte_ = val;
-    ConfigResult res = pImpl->configure();
+    p_impl_->num_of_bits_per_byte_ = val;
+    ConfigResult res = p_impl_->configure();
 
     return (res == ConfigResult::SUCCESS || res == ConfigResult::DEVICE_IS_CLOSED) ? true : false;
 }
 bool SerialDevice::setParity(Parity val){
-    pImpl->parity_ = val;
-    ConfigResult res = pImpl->configure();
+    p_impl_->parity_ = val;
+    ConfigResult res = p_impl_->configure();
 
     return (res == ConfigResult::SUCCESS || res == ConfigResult::DEVICE_IS_CLOSED) ? true : false;
 }
 bool SerialDevice::setReadConfig(uint8_t vmin, uint8_t vtime){
-    pImpl->vmin_ = vmin;
-    pImpl->vtime_ = vtime;
-    ConfigResult res = pImpl->configure();
+    p_impl_->vmin_ = vmin;
+    p_impl_->vtime_ = vtime;
+    ConfigResult res = p_impl_->configure();
 
     return (res == ConfigResult::SUCCESS || res == ConfigResult::DEVICE_IS_CLOSED) ? true : false;
 }
 
 bool SerialDevice::setRWMode(RWMode val){
-    if(pImpl->status_ == State::OPEN){ // We should not change the device path when the device is opened
+    if(p_impl_->status_ == State::OPEN){ // We should not change the device path when the device is opened
         return false;
     }
-    pImpl->rw_mode_ = val;
+    p_impl_->rw_mode_ = val;
     return true;
 }
 bool SerialDevice::setSoftwareFlowControl(bool use){
-    pImpl->use_software_flow_control_ = use;
-    ConfigResult res = pImpl->configure();
+    p_impl_->use_software_flow_control_ = use;
+    ConfigResult res = p_impl_->configure();
 
     return (res == ConfigResult::SUCCESS || res == ConfigResult::DEVICE_IS_CLOSED) ? true : false;
 }
 bool SerialDevice::setStopBits(StopBits val){
-    pImpl->stop_bits_ = val;
-    ConfigResult res = pImpl->configure();
+    p_impl_->stop_bits_ = val;
+    ConfigResult res = p_impl_->configure();
 
     return (res == ConfigResult::SUCCESS || res == ConfigResult::DEVICE_IS_CLOSED) ? true : false;
 }
 
 State SerialDevice::status(){
-    return pImpl->status_;
+    return p_impl_->status_;
 }
 
 bool SerialDevice::connect(){
     int mode = O_NOCTTY | O_NDELAY;
-    switch (pImpl->rw_mode_){
+    switch (p_impl_->rw_mode_){
     case RWMode::READ_ONLY :
         mode |= O_RDONLY;
         break;
@@ -325,13 +325,13 @@ bool SerialDevice::connect(){
         mode |= O_RDWR;
         break;
     }
-    pImpl->device_desc_ = open(pImpl->device_path_.c_str(), mode);
-    if (pImpl->device_desc_ < 0){
-        pImpl->status_ = State::CLOSED;
+    p_impl_->device_desc_ = open(p_impl_->device_path_.c_str(), mode);
+    if (p_impl_->device_desc_ < 0){
+        p_impl_->status_ = State::CLOSED;
         return false;
     }
-    pImpl->status_ = State::OPEN;
-    ConfigResult res = pImpl->configure();
+    p_impl_->status_ = State::OPEN;
+    ConfigResult res = p_impl_->configure();
 
     if (res != ConfigResult::SUCCESS){
         disconnect();
@@ -341,9 +341,9 @@ bool SerialDevice::connect(){
 }
 
 bool SerialDevice::disconnect(){
-    if (pImpl->status_ == State::OPEN){
-        pImpl->status_ = State::CLOSED;
-        if (close(pImpl->device_desc_) != 0){
+    if (p_impl_->status_ == State::OPEN){
+        p_impl_->status_ = State::CLOSED;
+        if (close(p_impl_->device_desc_) != 0){
             return false;
         }
     }
@@ -351,26 +351,26 @@ bool SerialDevice::disconnect(){
 }
 
 int SerialDevice::readData(uint8_t * read_buffer){
-    std::lock_guard<std::mutex> lock(pImpl->fd_mutex_);
-    if (pImpl->status_ == State::CLOSED){
+    std::lock_guard<std::mutex> lock(p_impl_->fd_mutex_);
+    if (p_impl_->status_ == State::CLOSED){
         return -1;
     }
-    if (pImpl->rw_mode_ == RWMode::WRITE_ONLY){
+    if (p_impl_->rw_mode_ == RWMode::WRITE_ONLY){
         return -2;
     }
-    return read(pImpl->device_desc_, read_buffer, sizeof(*read_buffer));
+    return read(p_impl_->device_desc_, read_buffer, sizeof(*read_buffer));
 }
 
 int SerialDevice::writeData(uint8_t * write_buffer, unsigned int length){
-    std::lock_guard<std::mutex> lock(pImpl->fd_mutex_);
-    if (pImpl->status_ == State::CLOSED){
+    std::lock_guard<std::mutex> lock(p_impl_->fd_mutex_);
+    if (p_impl_->status_ == State::CLOSED){
         return -1;
     }
-    if (pImpl->rw_mode_ == RWMode::READ_ONLY){
+    if (p_impl_->rw_mode_ == RWMode::READ_ONLY){
         return -2;
     }
-    int bytes_written = static_cast<int>(write(pImpl->device_desc_, write_buffer, length));
-    tcdrain(pImpl->device_desc_);
+    int bytes_written = static_cast<int>(write(p_impl_->device_desc_, write_buffer, length));
+    tcdrain(p_impl_->device_desc_);
     return bytes_written;
 }
 

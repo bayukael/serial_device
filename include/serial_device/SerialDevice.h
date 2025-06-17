@@ -94,7 +94,7 @@ public:
 
 private:
     struct SerialDeviceImpl;
-    std::unique_ptr<SerialDeviceImpl> pImpl;
+    std::unique_ptr<SerialDeviceImpl> p_impl_;
 };
 
 } // namespace SerialComm
