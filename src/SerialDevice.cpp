@@ -176,6 +176,14 @@ namespace bayukael
       return ConfigResult::SUCCESS;
     }
 
+    SerialDevice::SerialDevice() : p_impl_(std::make_unique<SerialDevice::SerialDeviceImpl>())
+    {
+    }
+
+    SerialDevice::~SerialDevice()
+    {
+    }
+
     bool SerialDevice::setBaudRate(BaudRate val)
     {
       p_impl_->baud_rate_ = val;
