@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <memory>
 
-namespace bekael{
+namespace baykael{
 namespace SerialComm{
 
 enum class BaudRate{
@@ -98,4 +98,4 @@ private:
 };
 
 } // namespace SerialComm
-} // namespace bekael
+} // namespace baykael
