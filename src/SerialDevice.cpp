@@ -188,7 +188,7 @@ namespace bayukael
     {
       p_impl_->baud_rate_ = val;
       ConfigResult res = p_impl_->configure();
-
+      // DEVICE_IS_CLOSED is accepted because eventually when the connect() is called, the settings will be applied
       return (res == ConfigResult::SUCCESS || res == ConfigResult::DEVICE_IS_CLOSED) ? true : false;
     }
 
@@ -205,21 +205,21 @@ namespace bayukael
     {
       p_impl_->use_hardware_flow_control_ = use;
       ConfigResult res = p_impl_->configure();
-
+      // DEVICE_IS_CLOSED is accepted because eventually when the connect() is called, the settings will be applied
       return (res == ConfigResult::SUCCESS || res == ConfigResult::DEVICE_IS_CLOSED) ? true : false;
     }
     bool SerialDevice::setNumOfBitsPerByte(NumOfBitsPerByte val)
     {
       p_impl_->num_of_bits_per_byte_ = val;
       ConfigResult res = p_impl_->configure();
-
+      // DEVICE_IS_CLOSED is accepted because eventually when the connect() is called, the settings will be applied
       return (res == ConfigResult::SUCCESS || res == ConfigResult::DEVICE_IS_CLOSED) ? true : false;
     }
     bool SerialDevice::setParity(Parity val)
     {
       p_impl_->parity_ = val;
       ConfigResult res = p_impl_->configure();
-
+      // DEVICE_IS_CLOSED is accepted because eventually when the connect() is called, the settings will be applied
       return (res == ConfigResult::SUCCESS || res == ConfigResult::DEVICE_IS_CLOSED) ? true : false;
     }
     bool SerialDevice::setReadConfig(uint8_t vmin, uint8_t vtime)
@@ -227,7 +227,7 @@ namespace bayukael
       p_impl_->vmin_ = vmin;
       p_impl_->vtime_ = vtime;
       ConfigResult res = p_impl_->configure();
-
+      // DEVICE_IS_CLOSED is accepted because eventually when the connect() is called, the settings will be applied
       return (res == ConfigResult::SUCCESS || res == ConfigResult::DEVICE_IS_CLOSED) ? true : false;
     }
 
@@ -243,14 +243,14 @@ namespace bayukael
     {
       p_impl_->use_software_flow_control_ = use;
       ConfigResult res = p_impl_->configure();
-
+      // DEVICE_IS_CLOSED is accepted because eventually when the connect() is called, the settings will be applied
       return (res == ConfigResult::SUCCESS || res == ConfigResult::DEVICE_IS_CLOSED) ? true : false;
     }
     bool SerialDevice::setStopBits(StopBits val)
     {
       p_impl_->stop_bits_ = val;
       ConfigResult res = p_impl_->configure();
-
+      // DEVICE_IS_CLOSED is accepted because eventually when the connect() is called, the settings will be applied
       return (res == ConfigResult::SUCCESS || res == ConfigResult::DEVICE_IS_CLOSED) ? true : false;
     }
 
