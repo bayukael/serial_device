@@ -87,6 +87,7 @@ namespace bayukael
       bool setRWMode(RWMode);
       bool setSoftwareFlowControl(bool);
       bool setStopBits(StopBits);
+      std::string getDevicePath();
       State status();
       bool connect();
       bool disconnect();

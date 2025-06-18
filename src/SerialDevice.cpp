@@ -254,6 +254,11 @@ namespace bayukael
       return (res == ConfigResult::SUCCESS || res == ConfigResult::DEVICE_IS_CLOSED) ? true : false;
     }
 
+    std::string SerialDevice::getDevicePath()
+    {
+      return p_impl_->device_path_;
+    }
+
     State SerialDevice::status()
     {
       return p_impl_->status_;
