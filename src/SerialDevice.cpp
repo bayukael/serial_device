@@ -266,6 +266,9 @@ namespace bayukael
 
     bool SerialDevice::connect()
     {
+      if (p_impl_->status_ == State::OPEN){
+        return true; // It is already open, meaning it is already connected.
+      }
       int mode = O_NOCTTY | O_NDELAY;
       switch (p_impl_->rw_mode_) {
         case RWMode::READ_ONLY: mode |= O_RDONLY; break;
@@ -282,6 +285,7 @@ namespace bayukael
       p_impl_->status_ = State::OPEN;
       ConfigResult res = p_impl_->configure();
 
+      // We have to disconnect to close the file when the configuration is not successfully set
       if (res != ConfigResult::SUCCESS) {
         disconnect();
       }
