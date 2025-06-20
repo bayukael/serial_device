@@ -30,8 +30,8 @@ namespace bayukael
       bool use_hardware_flow_control_ = false;
       bool use_software_flow_control_ = false;
       RWMode rw_mode_ = RWMode::BOTH;
-      uint8_t vmin_ = 1;
-      uint8_t vtime_ = 10;
+      uint8_t vmin_ = 1;   // read() will block until it gets this number of byte
+      uint8_t vtime_ = 10; // read() will block until this number of time in deciseconds. 10 deciseconds means 1 second.
 
       ConfigResult configure();
     };
@@ -192,15 +192,6 @@ namespace bayukael
       return (res == ConfigResult::SUCCESS || res == ConfigResult::DEVICE_IS_CLOSED) ? true : false;
     }
 
-    bool SerialDevice::setDevicePath(const std::string& device_path)
-    {
-      if (p_impl_->status_ == State::OPEN) { // We should not change the device path when the device is opened
-        return false;
-      }
-      p_impl_->device_path_ = device_path;
-      return true;
-    }
-
     bool SerialDevice::setHardwareFlowControl(bool use)
     {
       p_impl_->use_hardware_flow_control_ = use;
@@ -208,6 +199,7 @@ namespace bayukael
       // DEVICE_IS_CLOSED is accepted because eventually when the connect() is called, the settings will be applied
       return (res == ConfigResult::SUCCESS || res == ConfigResult::DEVICE_IS_CLOSED) ? true : false;
     }
+
     bool SerialDevice::setNumOfBitsPerByte(NumOfBitsPerByte val)
     {
       p_impl_->num_of_bits_per_byte_ = val;
@@ -215,6 +207,7 @@ namespace bayukael
       // DEVICE_IS_CLOSED is accepted because eventually when the connect() is called, the settings will be applied
       return (res == ConfigResult::SUCCESS || res == ConfigResult::DEVICE_IS_CLOSED) ? true : false;
     }
+
     bool SerialDevice::setParity(Parity val)
     {
       p_impl_->parity_ = val;
@@ -222,6 +215,7 @@ namespace bayukael
       // DEVICE_IS_CLOSED is accepted because eventually when the connect() is called, the settings will be applied
       return (res == ConfigResult::SUCCESS || res == ConfigResult::DEVICE_IS_CLOSED) ? true : false;
     }
+
     bool SerialDevice::setReadConfig(uint8_t vmin, uint8_t vtime)
     {
       p_impl_->vmin_ = vmin;
@@ -231,14 +225,6 @@ namespace bayukael
       return (res == ConfigResult::SUCCESS || res == ConfigResult::DEVICE_IS_CLOSED) ? true : false;
     }
 
-    bool SerialDevice::setRWMode(RWMode val)
-    {
-      if (p_impl_->status_ == State::OPEN) { // We should not change the device path when the device is opened
-        return false;
-      }
-      p_impl_->rw_mode_ = val;
-      return true;
-    }
     bool SerialDevice::setSoftwareFlowControl(bool use)
     {
       p_impl_->use_software_flow_control_ = use;
@@ -246,6 +232,7 @@ namespace bayukael
       // DEVICE_IS_CLOSED is accepted because eventually when the connect() is called, the settings will be applied
       return (res == ConfigResult::SUCCESS || res == ConfigResult::DEVICE_IS_CLOSED) ? true : false;
     }
+
     bool SerialDevice::setStopBits(StopBits val)
     {
       p_impl_->stop_bits_ = val;
@@ -264,24 +251,30 @@ namespace bayukael
       return p_impl_->status_;
     }
 
-    bool SerialDevice::connect()
+    bool SerialDevice::connect(const std::string& device_path, const RWMode& rw_mode)
     {
-      if (p_impl_->status_ == State::OPEN){
-        return true; // It is already open, meaning it is already connected.
+      if (p_impl_->status_ == State::OPEN) {
+        // If it is already connected, we disconnect it first. If it fails to disconnect, we return false.
+        if(!this->disconnect()){
+          return false;
+        }
+        // After it is disconnected, we can continue the connecting process.
       }
       int mode = O_NOCTTY | O_NDELAY;
-      switch (p_impl_->rw_mode_) {
+      switch (rw_mode) {
         case RWMode::READ_ONLY: mode |= O_RDONLY; break;
 
         case RWMode::WRITE_ONLY: mode |= O_WRONLY; break;
 
         case RWMode::BOTH: mode |= O_RDWR; break;
       }
-      p_impl_->device_desc_ = open(p_impl_->device_path_.c_str(), mode);
+      p_impl_->device_desc_ = open(device_path.c_str(), mode);
       if (p_impl_->device_desc_ < 0) {
         p_impl_->status_ = State::CLOSED;
         return false;
       }
+      p_impl_->device_path_ = device_path;
+      p_impl_->rw_mode_ = rw_mode;
       p_impl_->status_ = State::OPEN;
       ConfigResult res = p_impl_->configure();
 
@@ -308,7 +301,7 @@ namespace bayukael
     {
       std::lock_guard<std::mutex> lock(p_impl_->fd_mutex_);
       if (p_impl_->status_ == State::CLOSED) {
-        return -1;
+        return -3;
       }
       if (p_impl_->rw_mode_ == RWMode::WRITE_ONLY) {
         return -2;

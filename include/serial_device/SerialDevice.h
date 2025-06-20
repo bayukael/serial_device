@@ -79,17 +79,15 @@ namespace bayukael
       ~SerialDevice();
 
       bool setBaudRate(BaudRate);
-      bool setDevicePath(const std::string& device_path);
       bool setHardwareFlowControl(bool);
       bool setNumOfBitsPerByte(NumOfBitsPerByte);
       bool setParity(Parity);
       bool setReadConfig(uint8_t vmin, uint8_t vtime);
-      bool setRWMode(RWMode);
       bool setSoftwareFlowControl(bool);
       bool setStopBits(StopBits);
       std::string getDevicePath();
       State status();
-      bool connect();
+      bool connect(const std::string& device_path, const RWMode& rw_mode);
       bool disconnect();
       int readData(uint8_t* read_buffer);
       int writeData(uint8_t* write_buffer, unsigned int length);
