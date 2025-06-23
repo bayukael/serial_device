@@ -182,6 +182,7 @@ namespace bayukael
 
     SerialDevice::~SerialDevice()
     {
+      disconnect();
     }
 
     bool SerialDevice::setBaudRate(BaudRate val)
