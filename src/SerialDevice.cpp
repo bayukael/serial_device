@@ -165,6 +165,7 @@ namespace bayukael
       tty.c_cflag |= CREAD;                                                        // Enable Receiver
       tty.c_lflag &= ~ICANON;                                                      // Use non-canonical mode, i.e. just read the data in raw
       tty.c_lflag &= ~ECHO;                                                        // Do not echo input characters
+      tty.c_lflag &= ~ISIG;                                                        // Do not process signal character
       tty.c_iflag &= ~(IGNBRK | BRKINT | PARMRK | ISTRIP | INLCR | IGNCR | ICRNL); // Turn off special handling of bytes on receive
       tty.c_oflag &= ~OPOST; // Prevent special interpretation of output bytes (e.g. newline chars)
       tty.c_oflag &= ~ONLCR; // Prevent conversion of newline to carriage return/line feed
@@ -256,7 +257,7 @@ namespace bayukael
     {
       if (p_impl_->status_ == State::OPEN) {
         // If it is already connected, we disconnect it first. If it fails to disconnect, we return false.
-        if(!this->disconnect()){
+        if (!this->disconnect()) {
           return false;
         }
         // After it is disconnected, we can continue the connecting process.
