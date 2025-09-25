@@ -302,13 +302,28 @@ namespace bayukael
     int SerialDevice::readData(uint8_t* read_buffer)
     {
       std::lock_guard<std::mutex> lock(p_impl_->fd_mutex_);
+      // When a terminal device is disconnected, any read() operation will return 0.
+      // Reference: https://pubs.opengroup.org/onlinepubs/009656599/toc.pdf, page 120, chapter 9.1.10. Modem Disconnect
+      //
+      // Because O_NDELAY is set, if read() is called and there is no data available, read() will return -1.
+      // Reference: https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap11.html
+      int read_status = read(p_impl_->device_desc_, read_buffer, sizeof(*read_buffer));
+
       if (p_impl_->status_ == State::CLOSED) {
         return -3;
       }
       if (p_impl_->rw_mode_ == RWMode::WRITE_ONLY) {
         return -2;
       }
-      return read(p_impl_->device_desc_, read_buffer, sizeof(*read_buffer));
+      if (read_status == 0 || p_impl_->status_ == State::DISCONNECTED) {
+        disconnect();
+        p_impl_->status_ = State::DISCONNECTED;
+        return -1;
+      }
+      if (read_status == -1) {
+        return 0;
+      }
+      return read_status;
     }
 
     int SerialDevice::writeData(uint8_t* write_buffer, unsigned int length)

@@ -63,8 +63,9 @@ namespace bayukael
     };
 
     enum class State {
-      CLOSED,
+      CLOSED, // Initial state, or state after disconnect() is called
       OPEN,
+      DISCONNECTED, // Disconnection that is not from disconnect()
     };
 
     enum class StopBits {
