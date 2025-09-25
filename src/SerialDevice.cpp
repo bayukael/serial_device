@@ -270,6 +270,8 @@ namespace bayukael
 
         case RWMode::BOTH: mode |= O_RDWR; break;
       }
+      p_impl_->device_path_ = device_path;
+      p_impl_->rw_mode_ = rw_mode;
       p_impl_->device_desc_ = open(device_path.c_str(), mode);
       if (p_impl_->device_desc_ < 0) {
         p_impl_->status_ = State::CLOSED;
