@@ -43,6 +43,8 @@ namespace bayukael
       }
       termios tty;
       if (tcgetattr(device_desc_, &tty) != 0) {
+        // One possibility to enter this state is when device_desc is not a terminal device (not a serial port, pseudoterminal, console, or
+        // any terminal)
         return ConfigResult::TERMIOS_ERROR;
       }
 
@@ -262,6 +264,8 @@ namespace bayukael
         }
         // After it is disconnected, we can continue the connecting process.
       }
+      // O_NDELAY is used so that if read() is called and there is no data available, read() will return -1 and if the connection is
+      // interrupted, read() will return 0. Reference: https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap11.html
       int mode = O_NOCTTY | O_NDELAY;
       switch (rw_mode) {
         case RWMode::READ_ONLY: mode |= O_RDONLY; break;
@@ -277,12 +281,11 @@ namespace bayukael
         p_impl_->status_ = State::CLOSED;
         return false;
       }
-      p_impl_->device_path_ = device_path;
-      p_impl_->rw_mode_ = rw_mode;
       p_impl_->status_ = State::OPEN;
       ConfigResult res = p_impl_->configure();
 
       // We have to disconnect to close the file when the configuration is not successfully set
+      // One possibility is when p_impl_->device_desc_ is not a terminal device
       if (res != ConfigResult::SUCCESS) {
         disconnect();
       }
