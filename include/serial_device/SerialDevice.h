@@ -4,11 +4,11 @@
 #include <stdint.h>
 #include <string>
 
-namespace bayukael
+namespace pendarlab::lib::comm::transport
 {
-  namespace serial_comm
+  class SerialDevice
   {
-
+  public:
     enum class BaudRate {
       B_UNSET,
       B_50,
@@ -72,31 +72,26 @@ namespace bayukael
       ONE,
       TWO,
     };
+    
+    SerialDevice();
+    ~SerialDevice();
 
-    class SerialDevice
-    {
-    public:
-      SerialDevice();
-      ~SerialDevice();
+    bool setBaudRate(BaudRate);
+    bool setHardwareFlowControl(bool);
+    bool setNumOfBitsPerByte(NumOfBitsPerByte);
+    bool setParity(Parity);
+    bool setReadConfig(uint8_t vmin, uint8_t vtime);
+    bool setSoftwareFlowControl(bool);
+    bool setStopBits(StopBits);
+    std::string getDevicePath();
+    State status();
+    bool connect(const std::string& device_path, const RWMode& rw_mode);
+    bool disconnect();
+    int readData(uint8_t* read_buffer);
+    int writeData(uint8_t* write_buffer, unsigned int length);
 
-      bool setBaudRate(BaudRate);
-      bool setHardwareFlowControl(bool);
-      bool setNumOfBitsPerByte(NumOfBitsPerByte);
-      bool setParity(Parity);
-      bool setReadConfig(uint8_t vmin, uint8_t vtime);
-      bool setSoftwareFlowControl(bool);
-      bool setStopBits(StopBits);
-      std::string getDevicePath();
-      State status();
-      bool connect(const std::string& device_path, const RWMode& rw_mode);
-      bool disconnect();
-      int readData(uint8_t* read_buffer);
-      int writeData(uint8_t* write_buffer, unsigned int length);
-
-    private:
-      struct SerialDeviceImpl;
-      std::unique_ptr<SerialDeviceImpl> p_impl_;
-    };
-
-  } // namespace serial_comm
-} // namespace bayukael
+  private:
+    struct SerialDeviceImpl;
+    std::unique_ptr<SerialDeviceImpl> p_impl_;
+  };
+} // namespace pendarlab::lib::comm::transport
