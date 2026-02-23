@@ -11,16 +11,16 @@
 void reader_routine()
 {
   std::string reader_port("/dev/pts/16");
-  bayukael::serial_comm::SerialDevice reader;
-  reader.setBaudRate(bayukael::serial_comm::BaudRate::B_2000000);
+  pendarlab::lib::comm::transport::SerialDevice reader;
+  reader.setBaudRate(pendarlab::lib::comm::transport::SerialDevice::BaudRate::B_2000000);
   reader.setReadConfig(0, 100);
-  reader.connect(reader_port, bayukael::serial_comm::RWMode::BOTH);
+  reader.connect(reader_port, pendarlab::lib::comm::transport::SerialDevice::RWMode::BOTH);
 
-  if (reader.status() == bayukael::serial_comm::State::OPEN) {
+  if (reader.status() == pendarlab::lib::comm::transport::SerialDevice::State::OPEN) {
     std::cout << "READER_THREAD: Reader is connected to " << reader_port << std::endl;
   }
 
-  while (reader.status() == bayukael::serial_comm::State::OPEN) {
+  while (reader.status() == pendarlab::lib::comm::transport::SerialDevice::State::OPEN) {
     uint8_t a_buffer;
     int bytes_read = 0;
     bytes_read = reader.readData(&a_buffer);
@@ -41,12 +41,12 @@ void reader_routine()
 void writer_routine()
 {
   std::string writer_port("/dev/pts/15");
-  bayukael::serial_comm::SerialDevice writer;
-  writer.setBaudRate(bayukael::serial_comm::BaudRate::B_2000000);
+  pendarlab::lib::comm::transport::SerialDevice writer;
+  writer.setBaudRate(pendarlab::lib::comm::transport::SerialDevice::BaudRate::B_2000000);
   writer.setReadConfig(0, 10);
-  writer.connect(writer_port, bayukael::serial_comm::RWMode::BOTH);
+  writer.connect(writer_port, pendarlab::lib::comm::transport::SerialDevice::RWMode::BOTH);
 
-  if (writer.status() == bayukael::serial_comm::State::OPEN) {
+  if (writer.status() == pendarlab::lib::comm::transport::SerialDevice::State::OPEN) {
     std::cout << "WRITER_THREAD: Writer is connected to " << writer_port << std::endl;
     std::cout << "WRITER_THREAD: Sending data every 250 milliseconds" << std::endl;
 
@@ -111,26 +111,26 @@ int write_and_read_test(int argc, char* argv[])
     }
   }
 
-  bayukael::serial_comm::BaudRate baud_rate = bayukael::serial_comm::BaudRate::B_2000000;
+  pendarlab::lib::comm::transport::SerialDevice::BaudRate baud_rate = pendarlab::lib::comm::transport::SerialDevice::BaudRate::B_2000000;
 
-  bayukael::serial_comm::SerialDevice writer;
+  pendarlab::lib::comm::transport::SerialDevice writer;
   writer.setBaudRate(baud_rate);
   writer.setReadConfig(0, 10);
-  bool writer_connect = writer.connect(writer_port, bayukael::serial_comm::RWMode::BOTH);
+  bool writer_connect = writer.connect(writer_port, pendarlab::lib::comm::transport::SerialDevice::RWMode::BOTH);
   std::cout << "writer_connect: " << writer_connect << std::endl;
-  if (writer.status() == bayukael::serial_comm::State::OPEN) {
+  if (writer.status() == pendarlab::lib::comm::transport::SerialDevice::State::OPEN) {
     std::cout << "___WRITER___: connected to " << writer_port << std::endl;
     std::cout << "___WRITER___: Sending data every 250 milliseconds" << std::endl;
   } else {
     std::cout << "___WRITER___: failed to connect to " << writer_port << std::endl;
   }
 
-  bayukael::serial_comm::SerialDevice reader;
+  pendarlab::lib::comm::transport::SerialDevice reader;
   reader.setBaudRate(baud_rate);
   reader.setReadConfig(0, 10);
-  bool reader_connect = reader.connect(reader_port, bayukael::serial_comm::RWMode::BOTH);
+  bool reader_connect = reader.connect(reader_port, pendarlab::lib::comm::transport::SerialDevice::RWMode::BOTH);
   std::cout << "reader_connect: " << reader_connect << std::endl;
-  if (reader.status() == bayukael::serial_comm::State::OPEN) {
+  if (reader.status() == pendarlab::lib::comm::transport::SerialDevice::State::OPEN) {
     std::cout << "##_READER_##: connected to " << reader_port << std::endl;
   } else {
     std::cout << "##_READER_##: failed to connect to " << reader_port << std::endl;
@@ -225,11 +225,11 @@ int file_type_test(int argc, char* argv[])
     }
   }
 
-  bayukael::serial_comm::SerialDevice writer;
+  pendarlab::lib::comm::transport::SerialDevice writer;
   // writer.setBaudRate(baud_rate);
   // writer.setReadConfig(0, 10);
-  writer.connect(writer_port, bayukael::serial_comm::RWMode::BOTH);
-  if (writer.status() == bayukael::serial_comm::State::OPEN) {
+  writer.connect(writer_port, pendarlab::lib::comm::transport::SerialDevice::RWMode::BOTH);
+  if (writer.status() == pendarlab::lib::comm::transport::SerialDevice::State::OPEN) {
     std::cout << "___WRITER___: connected to " << writer_port << std::endl;
   } else {
     std::cout << "___WRITER___: failed to connect to " << writer_port << std::endl;

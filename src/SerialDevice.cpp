@@ -247,7 +247,7 @@ namespace pendarlab::lib::comm::transport
     return p_impl_->device_path_;
   }
 
-  State SerialDevice::status()
+  SerialDevice::State SerialDevice::status()
   {
     return p_impl_->status_;
   }
