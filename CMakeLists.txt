@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.13)
-project(bayukael_serial_device)
+project(pendarlab_serial_device)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_BUILD_RPATH_USE_ORIGIN TRUE)
