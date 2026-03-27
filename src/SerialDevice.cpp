@@ -301,7 +301,7 @@ namespace pendarlab::lib::comm::transport
     return true;
   }
 
-  int SerialDevice::readData(uint8_t* read_buffer)
+  int SerialDevice::readData(uint8_t* read_buffer, unsigned int buffer_size)
   {
     std::lock_guard<std::mutex> lock(p_impl_->fd_mutex_);
     // When a terminal device is disconnected, any read() operation will return 0.
@@ -309,7 +309,7 @@ namespace pendarlab::lib::comm::transport
     //
     // Because O_NDELAY is set, if read() is called and there is no data available, read() will return -1.
     // Reference: https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap11.html
-    int read_status = read(p_impl_->device_desc_, read_buffer, sizeof(*read_buffer));
+    int read_status = read(p_impl_->device_desc_, read_buffer, buffer_size);
 
     if (p_impl_->status_ == State::CLOSED) {
       return -3;
