@@ -87,7 +87,7 @@ namespace pendarlab::lib::comm::transport
     State status();
     bool connect(const std::string& device_path, const RWMode& rw_mode);
     bool disconnect();
-    int readData(uint8_t* read_buffer);
+    int readData(uint8_t* read_buffer, unsigned int buffer_size);
     int writeData(uint8_t* write_buffer, unsigned int length);
 
   private:

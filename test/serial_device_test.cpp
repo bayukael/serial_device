@@ -34,16 +34,39 @@ namespace
   TEST_F(SerialDeviceTest, WriteThenReadTest)
   {
     for (size_t i = 0; i < 256; i++) {
-      uint8_t byte_to_send = i;pty1.writeData(&byte_to_send, sizeof(byte_to_send));
+      uint8_t byte_to_send = i;
+      pty1.writeData(&byte_to_send, sizeof(byte_to_send));
       std::this_thread::sleep_for(std::chrono::milliseconds(1));
 
       uint8_t a_buffer;
-      pty2.readData(&a_buffer);
+      pty2.readData(&a_buffer, sizeof(a_buffer));
 
       EXPECT_EQ(byte_to_send, a_buffer);
       std::this_thread::sleep_for(std::chrono::milliseconds(4));
     }
   }
+
+  TEST_F(SerialDeviceTest, BulkWriteThenBulkReadTest)
+  {
+    size_t array_size = 10;
+    uint8_t bytes_to_send[array_size] = { 0 };
+    int k = -1;
+    for (size_t i = 0; i < 256; i++) {
+      if (i % array_size == 0) {
+        k++;
+        pty1.writeData(bytes_to_send, array_size);
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+        uint8_t buf[array_size] = { 0 };
+        int num_of_byte_received = pty2.readData(buf, array_size);
+        for (size_t j = 0; j < array_size; j++) {
+          EXPECT_EQ(bytes_to_send[j], buf[j]);
+        }
+      }
+      bytes_to_send[i - array_size * k] = i;
+    }
+  }
+
 } // namespace
 
 int main(int argc, char* argv[])
