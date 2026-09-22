@@ -44,10 +44,6 @@ install(
 	DESTINATION include
 )
 install(
-	DIRECTORY external/
-	DESTINATION include/${PACKAGE_FILENAME}
-)
-install(
 	EXPORT ${TARGET_EXPORT_NAME}
 	FILE ${TARGET_EXPORT_FILENAME}.cmake
 	NAMESPACE ${NAMESPACE}::
