@@ -88,7 +88,7 @@ namespace pendarlab::lib::comm::transport
     bool connect(const std::string& device_path, const RWMode& rw_mode);
     bool disconnect();
     int readData(uint8_t* read_buffer, unsigned int buffer_size);
-    int writeData(uint8_t* write_buffer, unsigned int length);
+    int writeData(const uint8_t* write_buffer, unsigned int length);
 
   private:
     struct SerialDeviceImpl;
