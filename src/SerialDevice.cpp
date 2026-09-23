@@ -328,7 +328,7 @@ namespace pendarlab::lib::comm::transport
     return read_status;
   }
 
-  int SerialDevice::writeData(uint8_t* write_buffer, unsigned int length)
+  int SerialDevice::writeData(const uint8_t* write_buffer, unsigned int length)
   {
     std::lock_guard<std::mutex> lock(p_impl_->fd_mutex_);
     if (p_impl_->status_ == State::CLOSED) {
