@@ -1,4 +1,4 @@
-#include "SerialDevice.h"
+#include "serial_device/SerialDevice.h"
 
 #include <fcntl.h> // Contains file controls like O_RDWR
 #include <mutex>
