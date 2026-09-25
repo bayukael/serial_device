@@ -36,11 +36,12 @@ There are no lint/format targets; building and running `serial_device_test` is t
 
 ## Install
 
-Install the library to a prefix. The version is appended to the install prefix, so files land under `<prefix>/<version>/`:
+Install the library to a prefix. The version is appended to the install prefix automatically at configure time, so files land under `<prefix>/<version>/`. To get this version-appended layout, set `CMAKE_INSTALL_PREFIX` during configuration (not via `--prefix` at install time):
 
 ```bash
-cmake -S . -B build -G Ninja
-cmake --install build --prefix <prefix>
+cmake -S . -B build -G Ninja -DCMAKE_INSTALL_PREFIX=<prefix>
+cmake --build build
+cmake --install build
 ```
 
 This installs with this layout:
@@ -52,6 +53,14 @@ This installs with this layout:
   lib/libpendarlab-serial_device.so.1.0.0
   lib/cmake/PendarlabSerialDevice        # CMake package config
 ```
+
+If you instead want to override the version-appending and install straight into a prefix, use `--prefix` at install time:
+
+```bash
+cmake --install build --prefix <somewhere-else>
+```
+
+This skips the `<version>/` subdirectory and installs directly under `<somewhere-else>/`.
 
 ## Using the library from another project
 
