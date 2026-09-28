@@ -36,7 +36,7 @@ There are no lint/format targets; building and running `serial_device_test` is t
 
 ## Install
 
-Install the library to a prefix. The version is appended to the install prefix automatically at configure time, so files land under `<prefix>/<version>/`. To get this version-appended layout, set `CMAKE_INSTALL_PREFIX` during configuration (not via `--prefix` at install time):
+Install the library straight into a prefix:
 
 ```bash
 cmake -S . -B build -G Ninja -DCMAKE_INSTALL_PREFIX=<prefix>
@@ -47,27 +47,19 @@ cmake --install build
 This installs with this layout:
 
 ```
-<prefix>/1.0.0/
+<prefix>/
   include/serial_device/SerialDevice.h   # public header
   include/serial_device/Version.h        # version header
   lib/libpendarlab-serial_device.so.1.0.0
   lib/cmake/PendarlabSerialDevice        # CMake package config
 ```
 
-If you instead want to override the version-appending and install straight into a prefix, use `--prefix` at install time:
-
-```bash
-cmake --install build --prefix <somewhere-else>
-```
-
-This skips the `<version>/` subdirectory and installs directly under `<somewhere-else>/`.
-
 ## Using the library from another project
 
-The library installs as the CMake package `PendarlabSerialDevice` (exported target `pendarlab::SerialDevice`). Point `CMAKE_PREFIX_PATH` at the versioned install prefix and request it from `find_package`:
+The library installs as the CMake package `PendarlabSerialDevice` (exported target `pendarlab::SerialDevice`). Point `CMAKE_PREFIX_PATH` at the install prefix and request it from `find_package`:
 
 ```bash
-cmake -S my_app -B build -DCMAKE_PREFIX_PATH=<prefix>/1.0.0
+cmake -S my_app -B build -DCMAKE_PREFIX_PATH=<prefix>
 ```
 
 ```cmake

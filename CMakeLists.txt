@@ -7,11 +7,6 @@ set(NAMESPACE pendarlab)
 set(PACKAGE_FILENAME serial_device)
 set(PACKAGE_NAME PendarlabSerialDevice)
 
-string(REGEX REPLACE "/+$" "" _bt_base "${CMAKE_INSTALL_PREFIX}")
-if(NOT _bt_base MATCHES "/${PROJECT_VERSION}$")
-    set(CMAKE_INSTALL_PREFIX "${_bt_base}/${PROJECT_VERSION}" CACHE PATH "" FORCE)
-endif()
-
 find_package(GTest CONFIG REQUIRED)
 
 # Serial Device Library
